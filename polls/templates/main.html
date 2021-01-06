@@ -1,0 +1,97 @@
+{% load static %}
+
+<head>
+    <title>Title</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'css/main.css' %}">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script>
+        function shownext(iD){
+          document.getElementById(iD).style.visibility = "visible";
+        }
+        function Option(e,a){
+
+           if(e.checked){
+                 document.getElementById(a).style.visibility = "hidden";
+
+                }else{
+                      document.getElementById(a).style.visibility = "visible";
+                     }
+                }
+    </script>
+</head>
+<body>
+{% if user != "" %}
+<div id="userId">
+<p>User Id : {{user}}</p>
+</div>
+
+<form id="logOut" action="logout" method="post">{% csrf_token %}
+    <button type="submit" class="btn btn-danger">logout</button>
+    <input type="text" value="" name="user" style=" visibility:hidden">
+</form>
+
+{% endif %}
+
+<div class="container">
+    <h2 >Verification of hate speech</h2>
+    <p>Choose file with hate speech :</p>
+    <form enctype = "multipart/form-data" action = "main" method = "POST">{% csrf_token %}
+        {% if user == "" %}
+        <input type="text" value="" name="user" style=" visibility:hidden">
+        {% endif %}
+        {% if user != "" %}
+        <input type="text" value={{user}} name="user" style=" visibility:hidden">
+        {% endif %}
+        <div id="inputLine">
+        <p>
+            Input Hatespeech file :
+            <input type = "file" name = "hatespeechfname" value="jk " oninput="shownext('file2')">
+        </p>
+        <p id = "file2" style="visibility : hidden">
+            Input seceond file :
+            <input  type = "file" name = "fname" value=" " oninput="shownext('sub')" >
+        </p>
+        <p id = "sub" style="visibility : hidden">
+            <input  type = "submit" value = "upload"  >
+        </p>
+        </div>
+    </form>
+</div>
+
+<div class="container">
+    <dl>
+        <form action="collect" method = "POST">{% csrf_token %}
+            <input type="text" value={{user}} name="user" style=" visibility:hidden">{% for qss in query_n_sentences_list %}
+            <div id="fblock" >
+            <dt><h4>Hate speech :{{qss.query}}</h4></dt>
+            <p>similer sentences:</p>
+            <p>left check box not hate speech and right one is for hate speech</p>
+            {% for s in qss.sentence_list %}
+                <div id="sblock" >
+            <dd>
+
+                <input type="checkbox" id="{{qss.query}}{{s}}0" name="{{qss.query}}{{s}}0" value="0" style = " visibility:visible" onchange = "Option(this,'{{qss.query}}{{s}}1')">
+                <input type="checkbox" id="{{qss.query}}{{s}}1" name="{{qss.query}}{{s}}1" value="1" style = " visibility:visible" onchange = "Option(this,'{{qss.query}}{{s}}0')">
+                <label for="{{qss.query}}{{s}}1"> {{s}}</label><br>
+                </div>
+
+            </dd>
+            {% endfor %}
+            </div>
+            <br>
+            {% endfor %}
+
+            <input id ="{{qss.query}}" type="submit">
+        </form>
+    </dl>
+</div>
+
+
+<h2>value of fleiss kappa : {{fleiss_kappa}}</h2>
+
+
+
+</body>

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+
+<body>
+<h1>successfully trained Ai</h1>
+k = {{ k }}
+{% for x in clustered_sentences %}
+<h1>######################### group ########################### </h1>
+    {% for y in x %}
+<ul>
+    <li>
+        {{y}}
+
+    </li>
+</ul>
+   {% endfor %}
+{% endfor %}
+</body>
+</html>
